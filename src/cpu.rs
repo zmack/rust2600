@@ -1,6 +1,6 @@
 use memory::Memory;
-use std::mem;
-use std::fmt;
+// use std::mem;
+// use std::fmt;
 
 #[derive(Show)]
 enum InstructionMode {
@@ -22,42 +22,42 @@ enum InstructionMode {
 }
 
 
-const InstructionOpcodes: [&'static str; 256] = [
-    "BRK", "ORA",  ""  ,  ""  ,  ""  , "ORA", "ASL",  ""  ,
-    "PHP", "ORA", "ASL",  ""  ,  ""  , "ORA", "ASL",  ""  ,
-    "BPL", "ORA",  ""  ,  ""  ,  ""  , "ORA", "ASL",  ""  ,
-    "CLC", "ORA",  ""  ,  ""  ,  ""  , "ORA", "ASL",  ""  ,
-    "JSR", "AND",  ""  ,  ""  , "BIT", "AND", "ROL",  ""  ,
-    "PLP", "AND", "ROL",  ""  , "BIT", "AND", "ROL",  ""  ,
-    "BMI", "AND",  ""  ,  ""  ,  ""  , "AND", "ROL",  ""  ,
-    "SEC", "AND",  ""  ,  ""  ,  ""  , "AND", "ROL",  ""  ,
-    "RTI", "EOR",  ""  ,  ""  ,  ""  , "EOR", "LSR",  ""  ,
-    "PHA", "EOR", "LSR",  ""  , "JMP", "EOR", "LSR",  ""  ,
-    "BVC", "EOR",  ""  ,  ""  ,  ""  , "EOR", "LSR",  ""  ,
-    "CLI", "EOR",  ""  ,  ""  ,  ""  , "EOR", "LSR",  ""  ,
-    "RTS", "ADC",  ""  ,  ""  ,  ""  , "ADC", "ROR",  ""  ,
-    "PLA", "ADC", "ROR",  ""  , "JMP", "ADC", "ROR",  ""  ,
-    "BVS", "ADC",  ""  ,  ""  ,  ""  , "ADC", "ROR",  ""  ,
-    "SEI", "ADC",  ""  ,  ""  ,  ""  , "ADC", "ROR",  ""  ,
-    "BCS", "STA",  ""  ,  ""  , "STY", "STA", "STX",  ""  ,
-    "DEY",  ""  , "TXA",  ""  , "STY", "STA", "STX",  ""  ,
-    "BCC", "STA",  ""  ,  ""  , "STY", "STA", "STX",  ""  ,
-    "TYA", "STA", "TXS",  ""  ,  ""  , "STA",  ""  ,  ""  ,
-    "LDY", "LDA", "LDX",  ""  , "LDY", "LDA", "LDX",  ""  ,
-    "TAY", "LDA", "TAX",  ""  , "LDY", "LDA", "LDX",  ""  ,
-    "BCS", "LDA",  ""  ,  ""  , "LDY", "LDA", "LDX",  ""  ,
-    "CLV", "LDA", "TSX",  ""  , "LDY", "LDA", "LDX",  ""  ,
-    "CPY", "CMP",  ""  ,  ""  , "CPY", "CMP", "DEC",  ""  ,
-    "INY", "CMP", "DEX",  ""  , "CPY", "CMP", "DEC",  ""  ,
-    "BNE", "CMP",  ""  ,  ""  ,  ""  , "CMP", "DEC",  ""  ,
-    "CLD", "CMP",  ""  ,  ""  ,  ""  , "CMP", "DEC",  ""  ,
-    "CPX", "SBC",  ""  ,  ""  , "CPX", "SBC", "INC",  ""  ,
-    "INX", "SBC", "NOP",  ""  , "CPX", "SBC", "INC",  ""  ,
-    "BEQ", "SBC",  ""  ,  ""  ,  ""  , "SBC", "INC",  ""  ,
-    "SED", "SBC",  ""  ,  ""  ,  ""  , "SBC", "INC",  ""  
+const OPCODES: [Ops; 256] = [
+    Ops::BRK, Ops::ORA, Ops::___, Ops::___, Ops::___, Ops::ORA, Ops::ASL, Ops::___,
+    Ops::PHP, Ops::ORA, Ops::ASL, Ops::___, Ops::___, Ops::ORA, Ops::ASL, Ops::___,
+    Ops::BPL, Ops::ORA, Ops::___, Ops::___, Ops::___, Ops::ORA, Ops::ASL, Ops::___,
+    Ops::CLC, Ops::ORA, Ops::___, Ops::___, Ops::___, Ops::ORA, Ops::ASL, Ops::___,
+    Ops::JSR, Ops::AND, Ops::___, Ops::___, Ops::BIT, Ops::AND, Ops::ROL, Ops::___,
+    Ops::PLP, Ops::AND, Ops::ROL, Ops::___, Ops::BIT, Ops::AND, Ops::ROL, Ops::___,
+    Ops::BMI, Ops::AND, Ops::___, Ops::___, Ops::___, Ops::AND, Ops::ROL, Ops::___,
+    Ops::SEC, Ops::AND, Ops::___, Ops::___, Ops::___, Ops::AND, Ops::ROL, Ops::___,
+    Ops::RTI, Ops::EOR, Ops::___, Ops::___, Ops::___, Ops::EOR, Ops::LSR, Ops::___,
+    Ops::PHA, Ops::EOR, Ops::LSR, Ops::___, Ops::JMP, Ops::EOR, Ops::LSR, Ops::___,
+    Ops::BVC, Ops::EOR, Ops::___, Ops::___, Ops::___, Ops::EOR, Ops::LSR, Ops::___,
+    Ops::CLI, Ops::EOR, Ops::___, Ops::___, Ops::___, Ops::EOR, Ops::LSR, Ops::___,
+    Ops::RTS, Ops::ADC, Ops::___, Ops::___, Ops::___, Ops::ADC, Ops::ROR, Ops::___,
+    Ops::PLA, Ops::ADC, Ops::ROR, Ops::___, Ops::JMP, Ops::ADC, Ops::ROR, Ops::___,
+    Ops::BVS, Ops::ADC, Ops::___, Ops::___, Ops::___, Ops::ADC, Ops::ROR, Ops::___,
+    Ops::SEI, Ops::ADC, Ops::___, Ops::___, Ops::___, Ops::ADC, Ops::ROR, Ops::___,
+    Ops::BCS, Ops::STA, Ops::___, Ops::___, Ops::STY, Ops::STA, Ops::STX, Ops::___,
+    Ops::DEY, Ops::___, Ops::TXA, Ops::___, Ops::STY, Ops::STA, Ops::STX, Ops::___,
+    Ops::BCC, Ops::STA, Ops::___, Ops::___, Ops::STY, Ops::STA, Ops::STX, Ops::___,
+    Ops::TYA, Ops::STA, Ops::TXS, Ops::___, Ops::___, Ops::STA, Ops::___, Ops::___,
+    Ops::LDY, Ops::LDA, Ops::LDX, Ops::___, Ops::LDY, Ops::LDA, Ops::LDX, Ops::___,
+    Ops::TAY, Ops::LDA, Ops::TAX, Ops::___, Ops::LDY, Ops::LDA, Ops::LDX, Ops::___,
+    Ops::BCS, Ops::LDA, Ops::___, Ops::___, Ops::LDY, Ops::LDA, Ops::LDX, Ops::___,
+    Ops::CLV, Ops::LDA, Ops::TSX, Ops::___, Ops::LDY, Ops::LDA, Ops::LDX, Ops::___,
+    Ops::CPY, Ops::CMP, Ops::___, Ops::___, Ops::CPY, Ops::CMP, Ops::DEC, Ops::___,
+    Ops::INY, Ops::CMP, Ops::DEX, Ops::___, Ops::CPY, Ops::CMP, Ops::DEC, Ops::___,
+    Ops::BNE, Ops::CMP, Ops::___, Ops::___, Ops::___, Ops::CMP, Ops::DEC, Ops::___,
+    Ops::CLD, Ops::CMP, Ops::___, Ops::___, Ops::___, Ops::CMP, Ops::DEC, Ops::___,
+    Ops::CPX, Ops::SBC, Ops::___, Ops::___, Ops::CPX, Ops::SBC, Ops::INC, Ops::___,
+    Ops::INX, Ops::SBC, Ops::NOP, Ops::___, Ops::CPX, Ops::SBC, Ops::INC, Ops::___,
+    Ops::BEQ, Ops::SBC, Ops::___, Ops::___, Ops::___, Ops::SBC, Ops::INC, Ops::___,
+    Ops::SED, Ops::SBC, Ops::___, Ops::___, Ops::___, Ops::SBC, Ops::INC, Ops::___
 ];
 
-const InstructionSizes: [u8; 256] = [
+const OPSIZES: [u8; 256] = [
     1, 2, 0, 0, 0, 2, 2, 0, 1, 2, 1, 0, 0, 3, 3, 0,
     2, 2, 0, 0, 0, 2, 2, 0, 1, 3, 0, 0, 0, 3, 3, 0,
     3, 2, 0, 0, 2, 2, 2, 0, 1, 2, 1, 0, 3, 3, 3, 0,
@@ -76,7 +76,7 @@ const InstructionSizes: [u8; 256] = [
     2, 2, 0, 0, 0, 2, 2, 0, 1, 3, 0, 0, 0, 3, 3, 0
 ];
 
-const InstructionTicks: [u8; 256] = [
+const OPTICKS: [u8; 256] = [
     7, 6, 0, 0, 0, 3, 5, 0, 3, 2, 2, 0, 0, 4, 6, 0,
     2, 5, 0, 0, 0, 4, 6, 0, 2, 4, 0, 0, 0, 4, 7, 0,
     6, 6, 0, 0, 3, 3, 5, 0, 4, 2, 2, 0, 4, 4, 6, 0,
@@ -95,7 +95,7 @@ const InstructionTicks: [u8; 256] = [
     2, 5, 0, 0, 0, 4, 6, 0, 2, 4, 0, 0, 0, 4, 7, 0
 ];
 
-const InstructionModes:[InstructionMode; 256] = [
+const OPMODES:[InstructionMode; 256] = [
     InstructionMode::IMP, InstructionMode::XIN, InstructionMode::NUL, InstructionMode::NUL,   // 0x00-0x03
     InstructionMode::NUL, InstructionMode::ZPG, InstructionMode::ZPG, InstructionMode::NUL,   // 0x04-0x07
     InstructionMode::IMP, InstructionMode::IMM, InstructionMode::ACC, InstructionMode::NUL,   // 0x08-0x0b
@@ -164,7 +164,7 @@ const InstructionModes:[InstructionMode; 256] = [
 
 #[derive(Show)]
 struct Op {
-    opcode: &'static str,
+    opcode: Ops,
     size: u8,
     ticks: u8,
     raw: u8,
@@ -178,15 +178,16 @@ impl Op {
         let param:u16 = (param_hi as u16) * 0x100 + (param_lo as u16);
         Op {
             raw: instruction,
-            opcode: InstructionOpcodes[index],
-            size: InstructionSizes[index],
-            ticks: InstructionTicks[index],
-            mode: InstructionModes[index],
+            opcode: OPCODES[index],
+            size: OPSIZES[index],
+            ticks: OPTICKS[index],
+            mode: OPMODES[index],
             param: param
         }
     }
 }
 
+#[derive(Show)]
 enum Ops {
     ADC,
     AND,
@@ -216,6 +217,7 @@ enum Ops {
     INX,
     INY,
     JMP,
+    JSR,
     LDA,
     LDX,
     LDY,
@@ -242,7 +244,8 @@ enum Ops {
     TSX,
     TXA,
     TXS,
-    TYA
+    TYA,
+    ___ // Unknown
 }
 
 pub struct CPU<'a> {
@@ -287,7 +290,7 @@ impl<'a> CPU<'a> {
 
     pub fn tick(&mut self) {
         let operation = self.fetch();
-        println!("Operation is {:?} ( {:X} )", operation, operation.raw);
+        // println!("Operation is {:?} ( {:X} )", operation, operation.raw);
         self.decode(&operation);
         self.execute(&operation);
     }
@@ -299,9 +302,23 @@ impl<'a> CPU<'a> {
         // println!("Opcode is {:X}, Param is {:X} pc is {}", opcode, param, self.pc);
 
         let operation = Op::new(opcode, param_lo, param_hi);
+        self.execute(&operation);
         self.pc += operation.size as u16;
 
         operation
+    }
+
+    fn execute(&mut self, operation: &Op) {
+        match operation {
+            &Op {
+                opcode: Ops::LDA, mode: InstructionMode::IMM,
+                ticks: _, raw: _, param: _,
+                size: s,
+            } => {
+                println!("Immediate -> {:?}", operation);
+            },
+            _ => {}
+        }
     }
 
     fn mem_get(&self, offset: u16) -> u8 {
@@ -309,8 +326,5 @@ impl<'a> CPU<'a> {
     }
 
     fn decode(&self, operation: &Op) {
-    }
-
-    fn execute(&mut self, operation: &Op) {
     }
 }
